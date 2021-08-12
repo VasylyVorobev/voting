@@ -39,6 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'drf_yasg',
+]
+
+LOCAL_APPS = [
+    'main.apps.MainConfig',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
