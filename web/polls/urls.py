@@ -8,6 +8,7 @@ app_name = 'polls'
 router = DefaultRouter()
 
 urlpatterns = [
+    path('create/', views.CreatePollsView.as_view({'post': 'create'}), name='create_polls'),
 
 ]
 
