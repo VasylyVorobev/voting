@@ -27,6 +27,9 @@ DEBUG = bool(os.environ.get('DEBUG', 1))
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 
+# AUTH_USER_MODEL = 'main.User'
+SUPERUSER_EMAIL = os.environ.get('SUPERUSER_EMAIL', 'test@test.com')
+SUPERUSER_PASSWORD = os.environ.get('SUPERUSER_PASSWORD', 'tester26')
 
 # Application definition
 
@@ -58,6 +61,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+}
+
 ROOT_URLCONF = 'src.urls'
 
 TEMPLATES = [
@@ -88,7 +103,7 @@ DATABASES = {
         "NAME": os.environ.get("POSTGRES_DB"),
         "USER": os.environ.get("POSTGRES_USER"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("POSTGRES_SOCKET") or os.environ.get('POSTGRES_HOST'),
+        "HOST": os.environ.get('POSTGRES_HOST') or os.environ.get("POSTGRES_SOCKET"),
         "PORT": os.environ.get("POSTGRES_PORT"),
         "CONN_MAX_AGE": 0,
     },
@@ -111,6 +126,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
 
 
 # Internationalization
