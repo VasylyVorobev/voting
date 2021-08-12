@@ -5,4 +5,5 @@ urlpatterns = [
     path('', include('main.urls')),
     path('admin/', admin.site.urls),
     path('api/', include('rest_framework.urls')),
+    path('polls/', include('polls.urls')),
 ]
