@@ -4,7 +4,8 @@ from .models import Question, Choice
 from .services import PollsService
 
 error_messages: dict = {
-    'questions_number': _("the number of responses must be at least 2")
+    'questions_number': _("The number of responses must be at least 2"),
+    'choice_exists': _('There is no such choice')
 }
 
 
@@ -42,3 +43,17 @@ class CreateUpdatePollsSerializer(serializers.Serializer):
         instance.save(update_fields=('title', ))
         PollsService.bulk_create_choice(validated_data['choice'], question=instance, delete_old=True)
         return validated_data
+
+
+class VotingSerializer(serializers.Serializer):
+    choice_id = serializers.IntegerField()
+
+    def validate_choice_id(self, choice_id) -> int:
+        if not PollsService.is_choice_exists(choice_id):
+            raise serializers.ValidationError(error_messages['choice_exists'])
+        return choice_id
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        PollsService.add_user_choice(self.validated_data['choice_id'], user)
+        return self.validated_data

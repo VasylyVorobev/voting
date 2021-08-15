@@ -14,6 +14,8 @@ urlpatterns = [
     path('update/<pk>/', views.PollsViewSet.as_view({'put': 'update'}), name='update_polls'),
     path('delete/<pk>/', views.PollsViewSet.as_view({'delete': 'destroy'}), name='delete_polls'),
 
+    path('get/vote/', views.VotingView.as_view()),
+
 ]
 
 urlpatterns += router.urls

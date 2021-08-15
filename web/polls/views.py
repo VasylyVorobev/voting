@@ -1,12 +1,11 @@
 import logging
-from django.utils.translation import gettext_lazy as _
-from drf_yasg.utils import swagger_auto_schema
+from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework import mixins
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import mixins
 from rest_framework import status
 from .models import Question, Choice
-from . import services
 from . import serializers
 
 logger = logging.getLogger(__name__)
@@ -32,3 +31,14 @@ class PollsViewSet(mixins.UpdateModelMixin,
         Choice.objects.filter(question=instance).delete()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class VotingView(GenericAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = serializers.VotingSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        response_data: dict = serializer.save()
+        return Response(response_data, status.HTTP_200_OK)

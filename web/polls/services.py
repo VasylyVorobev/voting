@@ -1,6 +1,9 @@
 from django.conf import settings
-
+from django.contrib.auth import get_user_model
 from .models import Question, Choice
+
+
+User = get_user_model()
 
 
 class PollsService:
@@ -16,3 +19,12 @@ class PollsService:
             Choice(title=choice, question=question) for choice in choices
         ]
         return Choice.objects.bulk_create(bulk_list)
+
+    @staticmethod
+    def is_choice_exists(choice_id: int) -> bool:
+        return Choice.objects.filter(id=choice_id).exists()
+
+    @staticmethod
+    def add_user_choice(choice_id: int, user: User) -> None:
+        choice = Choice.objects.get(id=choice_id)
+        choice.user_response.add(user)
