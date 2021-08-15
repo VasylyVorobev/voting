@@ -9,7 +9,9 @@ class PollsService:
         return Question.objects.create(title=question)
 
     @staticmethod
-    def bulk_create_choice(choices: list, question: Question) -> None:
+    def bulk_create_choice(choices: list, question: Question, delete_old: bool = None) -> None:
+        if delete_old:
+            question.choice_set.all().delete()
         bulk_list: list = [
             Choice(title=choice, question=question) for choice in choices
         ]

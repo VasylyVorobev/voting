@@ -8,7 +8,10 @@ app_name = 'polls'
 router = DefaultRouter()
 
 urlpatterns = [
-    path('create/', views.CreatePollsView.as_view({'post': 'create'}), name='create_polls'),
+    path('create/', views.PollsViewSet.as_view({'post': 'create'}), name='create_polls'),
+    path('list/', views.PollsViewSet.as_view({'get': 'list'}), name='list_polls'),
+    path('<pk>/', views.PollsViewSet.as_view({'get': 'retrieve'}), name='list_polls'),
+    path('update/<pk>/', views.PollsViewSet.as_view({'put': 'update'}), name='list_polls'),
 
 ]
 
