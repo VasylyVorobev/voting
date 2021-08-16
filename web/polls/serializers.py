@@ -12,18 +12,30 @@ error_messages: dict = {
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
+    percent = serializers.SerializerMethodField()
 
     class Meta:
         model = Choice
-        fields = ('id', 'title', )
+        fields = ('id', 'title', 'votes', 'percent')
+
+    def get_percent(self, instance: Choice):
+        question = instance.question
+        choices = question.choice_set.values_list('votes', flat=True)
+        count_votes = sum([i for i in choices])
+        return round(instance.votes / count_votes * 100, 2) if count_votes > 0 else 0
 
 
 class QuestionSerializer(serializers.ModelSerializer):
     choice_set = ChoiceSerializer(many=True)
+    result_vote = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
-        fields = ('title', 'choice_set')
+        fields = ('id', 'title', 'choice_set', 'result_vote')
+
+    def get_result_vote(self, instance: Question) -> int:
+
+        return sum(instance.choice_set.values_list('votes', flat=True))
 
 
 class CreateUpdatePollsSerializer(serializers.Serializer):
