@@ -1,7 +1,9 @@
+from django.db.models import F
 from django.utils.translation import gettext as _
 from rest_framework import serializers
 from .models import Question, Choice
 from .services import PollsService
+
 
 error_messages: dict = {
     'questions_number': _("The number of responses must be at least 2"),
@@ -54,6 +56,7 @@ class VotingSerializer(serializers.Serializer):
         return choice_id
 
     def save(self, **kwargs):
-        user = self.context['request'].user
-        PollsService.add_user_choice(self.validated_data['choice_id'], user)
+        choice = PollsService.get_choice(self.validated_data['choice_id'])
+        choice.votes = F('votes') + 1
+        choice.save(update_fields=('votes', ))
         return self.validated_data

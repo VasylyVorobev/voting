@@ -28,3 +28,7 @@ class PollsService:
     def add_user_choice(choice_id: int, user: User) -> None:
         choice = Choice.objects.get(id=choice_id)
         choice.user_response.add(user)
+
+    @staticmethod
+    def get_choice(choice_id: int) -> Choice:
+        return Choice.objects.get(id=choice_id)

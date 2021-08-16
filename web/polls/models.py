@@ -1,9 +1,5 @@
 from django.db import models
 from django.utils.translation import gettext as _
-from django.contrib.auth import get_user_model
-
-
-User = get_user_model()
 
 
 class Question(models.Model):
@@ -23,9 +19,9 @@ class Choice(models.Model):
     question = models.ForeignKey(
         Question, related_name='choice_set', on_delete=models.CASCADE, verbose_name=_('Question')
     )
-    user_response = models.ManyToManyField(User, blank=True, null=True)
     title = models.CharField(_('Choice'), max_length=150)
     objects = models.Manager()
+    votes = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = _('Choice')
