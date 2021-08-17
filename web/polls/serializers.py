@@ -1,3 +1,5 @@
+from types import Union
+
 from django.db.models import F
 from django.utils.translation import gettext as _
 from rest_framework import serializers
@@ -18,7 +20,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
         model = Choice
         fields = ('id', 'title', 'votes', 'percent')
 
-    def get_percent(self, instance: Choice):
+    def get_percent(self, instance: Choice) -> Union[float, int]:
         question = instance.question
         choices = question.choice_set.values_list('votes', flat=True)
         count_votes = sum([i for i in choices])
