@@ -77,7 +77,7 @@ class VotingSerializer(serializers.Serializer):
         client_ip: str = get_client_id(request)
         question_id: int = self.context['view'].kwargs.get('pk')
         if PollsService.user_already_voted(question_id, client_ip):
-            raise serializers.ValidationError('user_already_voted')
+            raise serializers.ValidationError(error_messages['user_already_voted'])
         PollsService.add_client_id(question_id, client_ip)
         return attrs
 
