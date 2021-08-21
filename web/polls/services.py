@@ -1,6 +1,5 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from .models import Question, Choice
+from .models import Question, Choice, ClientConfigure
 
 
 User = get_user_model()
@@ -34,5 +33,13 @@ class PollsService:
         return Choice.objects.get(id=choice_id)
 
     @staticmethod
-    def is_choice_belong_poll(choice_id: int, question_id: int):
+    def is_choice_belong_poll(choice_id: int, question_id: int) -> bool:
         return Choice.objects.filter(id=choice_id, question_id=question_id).exists()
+
+    @staticmethod
+    def user_already_voted(question_id: int, client_ip: str) -> bool:
+        return ClientConfigure.objects.filter(question_id=question_id, client_ip=client_ip).exists()
+
+    @staticmethod
+    def add_client_id(question_id: int, client_ip: str) -> ClientConfigure:
+        return ClientConfigure.objects.create(question_id=question_id, client_ip=client_ip)

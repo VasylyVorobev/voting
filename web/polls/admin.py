@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Choice
+from .models import Question, Choice, ClientConfigure
 
 
 class ChoiceInLine(admin.TabularInline):
@@ -14,4 +14,9 @@ class QuestionModelsAdmin(admin.ModelAdmin):
 
 @admin.register(Choice)
 class ChoiceModelsAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ClientConfigure)
+class ClientConfigureModelsAdmin(admin.ModelAdmin):
     pass

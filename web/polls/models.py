@@ -29,3 +29,8 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ClientConfigure(models.Model):
+    client_ip = models.CharField(max_length=20)
+    question = models.ForeignKey(Question, related_name='client_configure_set', on_delete=models.CASCADE)

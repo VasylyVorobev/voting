@@ -4,12 +4,13 @@ from django.utils.translation import gettext as _
 from rest_framework import serializers
 from .models import Question, Choice
 from .services import PollsService
-
+from .utils import get_client_id
 
 error_messages: dict = {
     'questions_number': _("The number of responses must be at least 2"),
     'choice_exists': _('There is no such choice'),
-    'choice_belong_poll': _('The choice does not belong to the poll')
+    'choice_belong_poll': _('The choice does not belong to the poll'),
+    'user_already_voted': _("You have already voted")
 }
 
 
@@ -70,6 +71,15 @@ class VotingSerializer(serializers.Serializer):
         if not PollsService.is_choice_belong_poll(choice_id, self.context['view'].kwargs.get('pk')):
             raise serializers.ValidationError(error_messages['choice_belong_poll'])
         return choice_id
+
+    def validate(self, attrs):
+        request = self.context['request']
+        client_ip: str = get_client_id(request)
+        question_id: int = self.context['view'].kwargs.get('pk')
+        if PollsService.user_already_voted(question_id, client_ip):
+            raise serializers.ValidationError('user_already_voted')
+        PollsService.add_client_id(question_id, client_ip)
+        return attrs
 
     def save(self, **kwargs):
         choice = PollsService.get_choice(self.validated_data['choice_id'])
