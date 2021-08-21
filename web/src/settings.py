@@ -73,6 +73,10 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '1/day',
+        'user': '1/day'
+    }
 }
 
 ROOT_URLCONF = 'src.urls'

@@ -1,5 +1,4 @@
-from types import Union
-
+from typing import Union
 from django.db.models import F
 from django.utils.translation import gettext as _
 from rest_framework import serializers
