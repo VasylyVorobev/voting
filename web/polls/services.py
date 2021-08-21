@@ -32,3 +32,7 @@ class PollsService:
     @staticmethod
     def get_choice(choice_id: int) -> Choice:
         return Choice.objects.get(id=choice_id)
+
+    @staticmethod
+    def is_choice_belong_poll(choice_id: int, question_id: int):
+        return Choice.objects.filter(id=choice_id, question_id=question_id).exists()

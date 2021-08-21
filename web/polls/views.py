@@ -1,12 +1,10 @@
 import logging
-
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import GenericAPIView
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
-from rest_framework import mixins
 from rest_framework import status
 from .models import Question, Choice
 from . import serializers
@@ -14,12 +12,7 @@ from . import serializers
 logger = logging.getLogger(__name__)
 
 
-class PollsViewSet(mixins.UpdateModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.DestroyModelMixin,
-                   GenericViewSet):
+class PollsViewSet(ModelViewSet):
 
     swagger_tags = ['Polls crud']
 
@@ -73,11 +66,10 @@ class PollsViewSet(mixins.UpdateModelMixin,
 class VotingView(GenericAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = serializers.VotingSerializer
-    throttle_classes = (UserRateThrottle, )
     swagger_tags = ['Voting']
 
     @swagger_auto_schema(tags=swagger_tags)
-    def post(self, request):
+    def post(self, request, pk):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         response_data: dict = serializer.save()

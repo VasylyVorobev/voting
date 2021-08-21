@@ -8,7 +8,8 @@ from .services import PollsService
 
 error_messages: dict = {
     'questions_number': _("The number of responses must be at least 2"),
-    'choice_exists': _('There is no such choice')
+    'choice_exists': _('There is no such choice'),
+    'choice_belong_poll': _('The choice does not belong to the poll')
 }
 
 
@@ -66,6 +67,8 @@ class VotingSerializer(serializers.Serializer):
     def validate_choice_id(self, choice_id) -> int:
         if not PollsService.is_choice_exists(choice_id):
             raise serializers.ValidationError(error_messages['choice_exists'])
+        if not PollsService.is_choice_belong_poll(choice_id, self.context['view'].kwargs.get('pk')):
+            raise serializers.ValidationError(error_messages['choice_belong_poll'])
         return choice_id
 
     def save(self, **kwargs):
