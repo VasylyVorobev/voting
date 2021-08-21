@@ -68,6 +68,9 @@ class VotingView(GenericAPIView):
     serializer_class = serializers.VotingSerializer
     swagger_tags = ['Voting']
 
+    def get_queryset(self):
+        return Choice.objects.select_related('question')
+
     @swagger_auto_schema(tags=swagger_tags)
     def post(self, request, pk):
         serializer = self.get_serializer(data=request.data)
