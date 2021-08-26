@@ -6,6 +6,6 @@ python manage.py check --deploy
 
 python manage.py collectstatic --no-input
 
-gunicorn src.wsgi:application
+gunicorn src.asgi:application
 
 exec "$@"
