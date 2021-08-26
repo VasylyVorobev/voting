@@ -12,6 +12,8 @@ services:
       - gunicorn_socket:/gunicorn_socket
     depends_on:
       - web
+    ports:
+      - 10000:9000
     restart: always
     healthcheck:
       test: service nginx status || exit 1
