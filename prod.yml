@@ -1,0 +1,84 @@
+version: '3.7'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/prod/nginx/Dockerfile
+    volumes:
+      - static_volume:/home/ubuntu/web/static
+      - media_volume:/home/ubuntu/web/media
+      - ./logs/nginx:/var/log/nginx:delegated
+      - gunicorn_socket:/gunicorn_socket
+    depends_on:
+      - web
+    restart: always
+    healthcheck:
+      test: service nginx status || exit 1
+      interval: 20s
+      timeout: 3s
+      retries: 3
+    networks:
+      - microservice_network
+  web:
+    build:
+      context: .
+      dockerfile: docker/prod/web/Dockerfile
+    entrypoint: /entrypoint.sh
+    volumes:
+      - static_volume:/home/ubuntu/web/static
+      - media_volume:/home/ubuntu/web/media
+      - redis_socket:/redis_socket
+      - gunicorn_socket:/gunicorn_socket
+      - ./logs/django:/home/ubuntu/web/logs:delegated
+    expose:
+      - 8000
+    env_file:
+      - docker/prod/env/.env
+      - docker/prod/dev/.db.env
+      - docker/prod/env/.gunicorn.env
+      - docker/prod/env/.data.env
+    restart: always
+    networks:
+      - microservice_network
+      - separated_network
+    depends_on:
+      - db
+    healthcheck:
+      test: curl --fail -s http://localhost:8000$$HEALTH_CHECK_URL || exit 1
+      interval: 1m30s
+      timeout: 3s
+      retries: 3
+    extra_hosts:
+      docker-gateway-host: 172.17.0.1
+  db:
+    build:
+      context: .
+      dockerfile: docker/dev/db/Dockerfile
+    hostname: postgres
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - postgres_socket:/postgres_socket
+    env_file:
+      - docker/dev/env/.db.env
+    networks:
+      - separated_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER" ]
+      interval: 50s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  redis_socket:
+  gunicorn_socket:
+  static_volume:
+  media_volume:
+
+networks:
+  microservice_network:
+    driver: bridge
+  separated_network:
+    driver: bridge

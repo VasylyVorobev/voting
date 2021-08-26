@@ -34,3 +34,5 @@ pillow==8.1.1
 # Jaeger OpenTracing
 jaeger-client==4.4.0
 django_opentracing==1.1.0
+
+gunicorn==20.1.0
