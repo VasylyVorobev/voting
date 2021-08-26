@@ -13,8 +13,7 @@ services:
     depends_on:
       - web
     ports:
-      - 80:80
-      - 443:443
+      - 10000:9000
     restart: always
     healthcheck:
       test: service nginx status || exit 1
